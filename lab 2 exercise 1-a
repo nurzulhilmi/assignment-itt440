@@ -1,59 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+#include <signal.h>
 
 int main(void)
 {
-pid_t pid,pid2;
-int rv,rv2;
+	void sigint_handler(int sig); /*prototype*/
+	char s[200];
 
-switch(pid - fork()) {
-case -1:
-perror("fork"); /*something went wrong*/
-exit(1); /*parent exits*/
+	if (signal(SIGINT, sigint_handler) == SIG_ERR)
+	{
+		perror("signal");
+		exit(1);
+	}
 
-case 0:
-printf(" CHILD: This is the child process!\n");
-printf(" CHILD: My PID is %d\n", getpid());
-printf(" CHILD: My parent's PID is %d\n", getpid());
-printf(" CHILD: Enter my exit status (make it small): ");
-scanf(" %d", &rv);
-printf(" CHILD: I'm outta here!\n");
-exit(rv);
+	printf("Enter a string: \n");
 
-default:
-printf("PARENT: This is the parent process!\n");
-printf("PARENT: My PID is %d\n", getpid());
-printf("PARENT: My child's PID is %d\n", pid);
-printf("PARENT: I'm now waiting for my child to exit()...\n");
-wait(&rv);
-printf("PARENT: My child's exit status is: %d\n", WEXITSTATUS(rv));
-switch(pid2 - fork()) {
-case -1:
-perror("fork"); /*something went wrong*/
-exit(1); /*parent exits*/
+	if (gets(s) == NULL)
+		perror("gets");
+	else
+		printf("You entered: \"%s\"\n", s);
 
-case 0:
-printf(" CHILD: This is the child process!\n");
-printf(" CHILD: My PID is %d\n", getpid());
-printf(" CHILD: My parent's PID is %d\n", getpid());
-printf(" CHILD: Enter my exit status (make it small): ");
-scanf(" %d", &rv2);
-printf(" CHILD: I'm outta here!\n");
-exit(rv);
-
-default:
-printf("PARENT: This is the parent process!\n");
-printf("PARENT: My PID is %d\n", getpid());
-printf("PARENT: My child's PID is %d\n", pid2);
-printf("PARENT: I'm now waiting for my child to exit()...\n");
-printf("PARENT: I'm outta here!\n");
-}
-printf("PARENT: I'm outta here!\n");
+	return 0;
 }
 
-return 0;
+void sigint_handler(int sig)
+{
+	printf("Not this time!\n");
 }
