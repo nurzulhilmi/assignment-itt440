@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <sigkill.h>
+#include <signal.h>
 
 int main(void)
 {
