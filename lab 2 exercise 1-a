@@ -19,7 +19,10 @@ int main(void)
 	if (gets(s) == NULL)
 		perror("gets");
 	else
+	{
 		printf("You entered: \"%s\"\n", s);
+		printf("This is a special signal handler for <signal>");
+	}
 
 	return 0;
 }
