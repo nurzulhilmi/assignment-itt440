@@ -5,12 +5,12 @@
 
 int main(void)
 {
-	void sigint_handler(int sig); /*prototype*/
+	void sigterm_handler(int sig); 
 	char s[200];
 
-	if (sigterm(SIGINT, sigint_handler) == SIG_ERR)
+	if (signal(SIGTERM, sigterm_handler) == SIG_ERR)
 	{
-		perror("sigterm");
+		perror("signal");
 		exit(1);
 	}
 
@@ -19,12 +19,15 @@ int main(void)
 	if (gets(s) == NULL)
 		perror("gets");
 	else
+	{
 		printf("You entered: \"%s\"\n", s);
+		printf("This is a special signal handler for <signal>");
+	}
 
 	return 0;
 }
 
-void sigint_handler(int sig)
+void sigterm_handler(int sig)
 {
 	printf("Not this time!\n");
 }
